@@ -148,9 +148,13 @@ void DelayTime(int inter)
 
 int main(int argc, char** argv)
 {
-    //DDPCONbits.JTAGEN = 0;
+    //DDPCONbits.JTAGEN = 0; //Enable if using onboard pullup resistors.
+
     SensorLoop_SetupAll();
+    
     CommunicationLoop_initialize();
+
+    
     // Enable multi-vector interrupts
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     //Turn on Interrupts

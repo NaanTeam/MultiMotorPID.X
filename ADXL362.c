@@ -1,12 +1,9 @@
-/**
- * @Author: Connor Martin
- * @Description: A set of function for interfacing with the ADXL362 Accelerometer.
- * @Requirements: FIFOSPI.c
- * @Devices: PIC32MX320F128H
- */
 
 #include "ADXL362.h"
 
+//******************************************************************************
+//Public Variable Declarations
+//******************************************************************************
 float ADXL362_XAcceleration = 0;
 float ADXL362_YAcceleration = 0;
 float ADXL362_ZAcceleration = 0;
@@ -18,7 +15,9 @@ int16 ADXL362_ZAcceleration_Raw = 0;
 int16 ADXL362_Temperature_Raw = 0;
 
 
-
+//******************************************************************************
+//Public Function Definitions
+//******************************************************************************
 void ADXL362_startMeasurements()
 {
     //Reset the device
@@ -28,16 +27,16 @@ void ADXL362_startMeasurements()
     reset[0] = ADXL362_REG_WRITE;
     reset[1] = ADXL362_SOFT_RESET;
     reset[2] = ADXL362_SOFT_RESET_KEY; //Represents the letter r
-    FIFOSPI2_addQueue(reset, 3, 1);
+    FIFOSPI2_pushTxQueue(reset, 3, ADXL362_SLAVE_SELECT_LINE);
     //Wait for the device to reset
     int i = 0;
     while (i < (1000))
     {
         i++;
     }
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
 
 
     //Turns on Measurement Mode
@@ -46,7 +45,7 @@ void ADXL362_startMeasurements()
     measurementMode[1] = ADXL362_POWER_CTL;
     measurementMode[2] = 0x00 |
             ADXL362_MEASURE_3D; //Turn on Measurement mode
-    FIFOSPI2_addQueue(measurementMode, 3, 1);
+    FIFOSPI2_pushTxQueue(measurementMode, 3, ADXL362_SLAVE_SELECT_LINE);
 
 
     //Immediately Follow it with a read X register
@@ -54,21 +53,21 @@ void ADXL362_startMeasurements()
     readReg[0] = ADXL362_REG_READ; //Read
     readReg[1] = ADXL362_XDATA8; //read X-reg
     readReg[2] = 0x00; //fluff for the read
-    FIFOSPI2_addQueue(measurementMode, 3, 1);
+    FIFOSPI2_pushTxQueue(measurementMode, 3, ADXL362_SLAVE_SELECT_LINE);
 
 
     //Wait for all data to be sent
     while (FIFOSPI2_rxBufferIndex() < 6) {}
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
     //k = FIFOSPI2_ReadQueue(&j);
 }
 
-void ADXL362_queueReadXYZT()
+void ADXL362_pushReadXYZT()
 {
     //Burst read
     char read[10];
@@ -82,7 +81,7 @@ void ADXL362_queueReadXYZT()
     read[7] = 0x00; //ADXL362_ZDATAH
     read[8] = 0x00; //ADXL362_TEMPL
     read[9] = 0x00; //ADXL362_TEMPH
-    FIFOSPI2_addQueue(read, 10, 1);
+    FIFOSPI2_pushTxQueue(read, 10, ADXL362_SLAVE_SELECT_LINE);
 }
 void ADXL362_interpretXYZT()
 {    
@@ -98,20 +97,20 @@ void ADXL362_interpretXYZT()
 
 
 
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
 
-    func_rslt = FIFOSPI2_readQueue(&x_lsb); //ADXL362_XDATAL
-    func_rslt = FIFOSPI2_readQueue(&x_msb); //ADXL362_XDATAH
+    func_rslt = FIFOSPI2_popRxQueue(&x_lsb); //ADXL362_XDATAL
+    func_rslt = FIFOSPI2_popRxQueue(&x_msb); //ADXL362_XDATAH
 
-    func_rslt = FIFOSPI2_readQueue(&y_lsb); //ADXL362_YDATAL
-    func_rslt = FIFOSPI2_readQueue(&y_msb); //ADXL362_YDATAH
+    func_rslt = FIFOSPI2_popRxQueue(&y_lsb); //ADXL362_YDATAL
+    func_rslt = FIFOSPI2_popRxQueue(&y_msb); //ADXL362_YDATAH
 
-    func_rslt = FIFOSPI2_readQueue(&z_lsb); //ADXL362_ZDATAL
-    func_rslt = FIFOSPI2_readQueue(&z_msb); //ADXL362_ZDATAH
+    func_rslt = FIFOSPI2_popRxQueue(&z_lsb); //ADXL362_ZDATAL
+    func_rslt = FIFOSPI2_popRxQueue(&z_msb); //ADXL362_ZDATAH
 
-    func_rslt = FIFOSPI2_readQueue(&temp_lsb); //ADXL362_TEMPL
-    func_rslt = FIFOSPI2_readQueue(&temp_msb); //ADXL362_TEMPH
+    func_rslt = FIFOSPI2_popRxQueue(&temp_lsb); //ADXL362_TEMPL
+    func_rslt = FIFOSPI2_popRxQueue(&temp_msb); //ADXL362_TEMPH
     
     
     x_16b = (x_msb << 8) | x_lsb;

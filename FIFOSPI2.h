@@ -10,10 +10,10 @@
  * @device:
  *      -PIC32MX695F512L
  * 
- * @remarks: Currently only supports 2 SPI devices. Some modifications need in
- * the setup and IRQ needed to support more. (possibly other places as well)
- *
- * @Bugs:
+ * @remarks:
+ * -Currently only supports 2 SPI devices. Some modifications need in
+ * the setup and IRQ needed to support more. (possibly other places as well).
+ * 
  * -Second slave select bus line (cs) might have problems. As in it toggles
  *  before the completeion of the tranmission. Or stays on long. Their needs to
  *  be some consistency with it. which thier isn't right now.
@@ -34,17 +34,17 @@ extern "C" {
 //Configuration #defines
 //******************************************************************************
 
-/**@brief Controls the slave select pin for the first device on SPI-2 line.*/
+/**Controls the slave select pin for the first device on SPI-2 line.*/
 #define FIFOSPI2_DeviceSSLine1_PortReg PORTEbits.RE0
-/**@brief Match this to the corresponding FIFOSPI2_DeviceSSLine1_PortReg.*/
+/**Match this to the corresponding FIFOSPI2_DeviceSSLine1_PortReg.*/
 #define FIFOSPI2_DeviceSSLine1_TriState TRISEbits.TRISE0
 
-/**@brief Controls the slave select pin for the second device on SPI-2 line.*/
+/**Controls the slave select pin for the second device on SPI-2 line.*/
 #define FIFOSPI2_DeviceSSLine2_PortReg PORTEbits.RE1
-/**@brief Match this to the corresponding FIFOSPI2_DeviceSSLine2_PortReg.*/
+/**Match this to the corresponding FIFOSPI2_DeviceSSLine2_PortReg.*/
 #define FIFOSPI2_DeviceSSLine2_TriState TRISEbits.TRISE1
 
-/**@brief Controls the maximum transmit and receive buffer sizes.*/
+/**Controls the maximum transmit and receive buffer sizes.*/
 #define FIFOSPI2_BUFFERSIZE 100
 
 
@@ -53,7 +53,7 @@ extern "C" {
 // Public Variables and Typedefs
 //******************************************************************************
 
-/**@brief Indicates whether spi-2's IRQ is currently running. 1 it is. 0 it's not.*/
+/**Indicates whether spi-2's IRQ is currently running. 1 it is. 0 it's not.*/
 extern uint8 FIFOSPI2_isRunnning;
 
 
@@ -63,7 +63,7 @@ extern uint8 FIFOSPI2_isRunnning;
 //******************************************************************************
 
 /**
- * @brief Sets up SPI2 in master mode using a FIFO buffer.
+ * Sets up SPI2 in master mode using a FIFO buffer.
  *
  * Operates at PER_FREQ/4 frequency, TX and RX IRQ, Idle Clock polarity and
  * data sampled at end of output time.
@@ -73,7 +73,7 @@ extern uint8 FIFOSPI2_isRunnning;
 void FIFOSPI2_initialize();
 
 /**
- * @brief Adds uint8's to the SPI TX buffer.
+ * Adds uint8's to the SPI TX buffer.
  *
  * @param data: An array of uint8 to queue in the TX buffer.
  * @param length: The length of the data array.
@@ -83,10 +83,10 @@ void FIFOSPI2_initialize();
  * @return A '1' if the characters where succesfully added. '-1' if the TX
  * buffer is full.
  */
-int FIFOSPI2_addQueue(uint8 data[], int length, int deviceSSLine);
+int FIFOSPI2_pushTxQueue(uint8 data[], int length, int deviceSSLine);
 
 /**
- * @brief Transfers a byte from the SPI RX buffer to a uint8.
+ * Transfers a byte from the SPI RX buffer to a uint8.
  *
  * @param readByte: A pointer to a uint8 variable.
  *
@@ -95,10 +95,10 @@ int FIFOSPI2_addQueue(uint8 data[], int length, int deviceSSLine);
  * A '-1' if the receive buffer is overflowing.
  * A '-3' if ti's an unknown error.
 */
-int FIFOSPI2_readQueue(uint8 *bytesBuffer);
+int FIFOSPI2_popRxQueue(uint8 *bytesBuffer);
 
 /**
- * @brief Determines the occupied length of the receive buffer.
+ * Determines the occupied length of the receive buffer.
  *
  * @return An integer representing the index where the buffer is currently
  * full to.

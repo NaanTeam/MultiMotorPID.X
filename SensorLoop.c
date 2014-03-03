@@ -1,19 +1,11 @@
-/**
- * @Author: Connor Martin
- * @Description: A interrupt driven timer loop that queues and interprets
- * data from the different sensors.
- * @Requirements: FIFOSPI.c, ADXL362.c, L3G4200D.c
- * @Devices: PIC32MX320F128H
- */
 
 #include "SensorLoop.h"
 
-
+//******************************************************************************
+//Public Function Definitions
+//******************************************************************************
 void SensorLoop_SetupAll()
 {
-
-
-
     //Setup SPI and I2C
     FIFOSPI2_initialize();
     FIFOI2C2_initialize();
@@ -42,9 +34,10 @@ void SensorLoop_SetupAll()
 }
 
 
+//******************************************************************************
+//Interrupt Request Routines
+//******************************************************************************
 //TODO KNOWN BUG: with SPI. Reordering ADXl and L3G will make L3G's reading bad.
-
-//IRQ for timer1. Used for polling sensors.
 void __ISR(_TIMER_1_VECTOR, IPL3AUTO) Timer1Handler(void)
 {
 
@@ -60,9 +53,9 @@ void __ISR(_TIMER_1_VECTOR, IPL3AUTO) Timer1Handler(void)
 
 
     //Que reads to the sensors for next timer tick.
-    ADXL362_queueReadXYZT();
-    L3G4200D_queueReadXYZT();
-    HMC5883L_queueReadXZY();
+    ADXL362_pushReadXYZT();
+    L3G4200D_pushReadXYZT();
+    HMC5883L_pushReadXZY();
 
 
     INTClearFlag(INT_T1);// Be sure to clear the Timer1 interrupt status

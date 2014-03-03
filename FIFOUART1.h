@@ -29,33 +29,40 @@ extern "C" {
 //******************************************************************************
 //Configuration #defines
 //******************************************************************************
+/**Controls UART1's transfer baud rate.*/
 #define FIFOUART1_BAUD_RATE 38400
+/**Controls FIFOUART1's tx and rx buffer size.*/
 #define FIFOUART1_BUFFERSIZE 256
 
 
 //******************************************************************************
 // Public Variables and Typedefs
 //******************************************************************************
+/**The index of the next empty RX buffer byte.*/
 extern uint16 FIFOUART1_RxBuffer_Index;
-    
+
+
 //******************************************************************************
 // Public Function Declarations
 //******************************************************************************
 /**
- * @brief Initializes UART1 to be interrupt driven, 8bit data, no parity and
+ * Initializes UART1 to be interrupt driven, 8bit data, no parity and
  * one stop bit.
+ *
  * @return void
  */
 void FIFOUART1_initialize();
 /**
- * @brief Queues a byte to be sent on UART1.
+ * Queues a byte to be sent on UART1.
+ *
  * @param txBytes: The buffer of bytes to be sent.
  * @param length: How long the buffer of bytes is.
  * @return  A 1 on success. A -1 on an overflow.
  */
 int FIFOUART1_pushTxQueue(uint8 txBytes[], int length);
 /**
- * @brief Reads a byte from the Queue containing bytes read from UART1.
+ * Reads a byte from the Queue containing bytes read from UART1.
+ *
  * @param *rxByte: The byte which the data will be transfer to.
  * @return A 2 on sucess and non-empty buffer. A 1 on success and empty buffer.
  * A -1 on an overflow. A -2 if the queue is empty.

@@ -188,7 +188,7 @@ void FIFOI2C2_initialize()
     I2C2CONbits.ON = 1;
 }
 
-uint8 FIFOI2C2_addQueue(uint16 device, uint8 byte_buffer[], FIFOI2C2_Device_Commands state_buffer[], uint32 buffer_length)
+uint8 FIFOI2C2_pushTxQueue(uint16 device, uint8 byte_buffer[], FIFOI2C2_Device_Commands state_buffer[], uint32 buffer_length)
 {
     int i = 0, ind = 0;
     FIFOI2C2_TX_Byte txb;
@@ -228,7 +228,7 @@ uint8 FIFOI2C2_addQueue(uint16 device, uint8 byte_buffer[], FIFOI2C2_Device_Comm
     return 1;
 }
 
-FIFOI2C2_RX_Byte FIFOI2C2_readQueue(uint16 device)
+FIFOI2C2_RX_Byte FIFOI2C2_popRxQueue(uint16 device)
 {
     int ind = 0;
     FIFOI2C2_RX_Byte rxb;
@@ -275,7 +275,7 @@ FIFOI2C2_RX_Byte FIFOI2C2_readQueue(uint16 device)
     }
 }
 
-uint8 FIFOI2C2_addQueue_readDeviceRegisters(uint16 device, uint8 start_register, int number_to_read)
+uint8 FIFOI2C2_pushTxQueue_readDeviceRegisters(uint16 device, uint8 start_register, int number_to_read)
 {
     int i = 0;
     int ind = 0;
@@ -343,7 +343,7 @@ uint8 FIFOI2C2_addQueue_readDeviceRegisters(uint16 device, uint8 start_register,
 
 
         //Adds these commands to the device's TX buffer and starts the IRQ
-        FIFOI2C2_addQueue(device, byte_buffer, state_buffer, ind);
+        FIFOI2C2_pushTxQueue(device, byte_buffer, state_buffer, ind);
 
         return 0;
     }
@@ -354,7 +354,7 @@ uint8 FIFOI2C2_addQueue_readDeviceRegisters(uint16 device, uint8 start_register,
     }
 }
 
-uint8 FIFOI2C2_addQueue_writeDeviceRegisters(uint16 device, uint8 start_register, uint8 byte_buffer[], uint32 buffer_length)
+uint8 FIFOI2C2_pushTxQueue_writeDeviceRegisters(uint16 device, uint8 start_register, uint8 byte_buffer[], uint32 buffer_length)
 {
     int i = 0, ind = 0;
     uint8 send_byte_buffer[FIFOI2C2_TRANSMIT_BUFFER_SIZE];
@@ -402,7 +402,7 @@ uint8 FIFOI2C2_addQueue_writeDeviceRegisters(uint16 device, uint8 start_register
 
 
         //Adds these commands to the device's TX buffer and starts the IRQ
-        FIFOI2C2_addQueue(device, send_byte_buffer, state_buffer, ind);
+        FIFOI2C2_pushTxQueue(device, send_byte_buffer, state_buffer, ind);
 
         return 0;
     }

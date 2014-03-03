@@ -1,22 +1,17 @@
-/**
- * @file: FIFOUART1.h
- * @brief: A 'First In First Out' interrupt driven UART1 communication method
- *
- * @author: Connor Martin
- * @date: Jan 23, 2014
- *
- * @preconditions:
- * @device:
- *      -PIC32MX695F512L
- *
- * @remarks:
- *
- */
 
 #include "CommunicationLoop.h"
 
+//******************************************************************************
+//Local Variable and Typedef Declarations
+//******************************************************************************
+uint16 CommunicationLoop_Index = 0;
+uint8 CommunicationLoop_MsgBuffer[COMMUNICATIONLOOP_BUFFERSIZE];
+uint8 CommunicationLoop_PossibleError = 0;
 
 
+//******************************************************************************
+//Public Function Definitions
+//******************************************************************************
 void CommunicationLoop_initialize()
 {
     FIFOUART1_initialize();
@@ -31,15 +26,10 @@ void CommunicationLoop_initialize()
 
 }
 
-uint16 CommunicationLoop_Index = 0;
-uint8 CommunicationLoop_MsgBuffer[COMMUNICATIONLOOP_BUFFERSIZE];
-uint8 CommunicationLoop_PossibleError = 0;
 
-//<start msg>
-//Length of msg
-//...msg...
-//<End msg>
-
+//******************************************************************************
+//Interrupt Request Routines
+//******************************************************************************
 void __ISR(_TIMER_4_VECTOR, IPL4AUTO) Timer4Handler(void)
 {
     uint8 rxByte = 0;

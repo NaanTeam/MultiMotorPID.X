@@ -1,12 +1,9 @@
-/**
- * @Author: Connor Martin
- * @Description: A set of function for interfacing with the L3G4200D Gyroscope
- * @Requirements: FIFOSPI.c
- * @Devices: PIC32MX320F128H
- */
 
 #include "L3G4200D.h"
 
+//******************************************************************************
+//Public Variable Declarations
+//******************************************************************************
 float L3G4200D_XAngularRate = 0;
 float L3G4200D_YAngularRate = 0;
 float L3G4200D_ZAngularRate = 0;
@@ -17,10 +14,13 @@ int16 L3G4200D_YAngularRate_Raw = 0;
 int16 L3G4200D_ZAngularRate_Raw = 0;
 int16 L3G4200D_Temperature_Raw = 0;
 
+//******************************************************************************
+//Public Function Definitions
+//******************************************************************************
 int L3G4200D_startMeasurements()
 {
     //Check to see if we are communicating correctly.
-    if (L3G4200D_ReadRegister_Blocking(L3G4200D_Reg_WHOAMI) != 0xD3)
+    if (L3G4200D_readRegister_Blocking(L3G4200D_Reg_WHOAMI) != 0xD3)
     {
         return -1;
     }
@@ -35,74 +35,74 @@ int L3G4200D_startMeasurements()
             (1 << L3G4200D_RegBit_Zen) | //Enables Z axis
             (1 << L3G4200D_RegBit_Yen) | //Enables Y axis
             (1 << L3G4200D_RegBit_Xen); //Enables X axis
-    L3G4200D_WriteRegister_Blocking(L3G4200D_Reg_CTRLREG1, CtrlReg1);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG1, CtrlReg1);
 
 
     //High Pass filter Settings
     unsigned char CtrlReg2 = 0;
     CtrlReg2 |= 0;
-    L3G4200D_WriteRegister_Blocking(L3G4200D_Reg_CTRLREG2, CtrlReg2);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG2, CtrlReg2);
 
 
     //Interupt and FIFO Stuff
     unsigned char CtrlReg3 = 0;
     CtrlReg3 |= 0;
-    L3G4200D_WriteRegister_Blocking(L3G4200D_Reg_CTRLREG3, CtrlReg3);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG3, CtrlReg3);
 
 
     //Data update, endian mode, scale selection, self test, SPI wire mode
     unsigned char CtrlReg4 = 0;
     CtrlReg4 |= 0x00 |
             (0 << L3G4200D_RegBit_FS); //Full scale selection of 250 dps.
-    L3G4200D_WriteRegister_Blocking(L3G4200D_Reg_CTRLREG4, CtrlReg4);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG4, CtrlReg4);
 
     
     //reboot, fifo enable, interupt stuff
     unsigned char CtrlReg5 = 0;
     CtrlReg5 |= 0;
-    L3G4200D_WriteRegister_Blocking(L3G4200D_Reg_CTRLREG5, CtrlReg5);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG5, CtrlReg5);
 
 }
 
-void L3G4200D_QueueWriteRegister(unsigned char reg, unsigned char value)
+void L3G4200D_pushWriteRegister(unsigned char reg, unsigned char value)
 {
     //Control Register one
     char buff[3];
     buff[0] = reg; //Register ADDR.. Defualt return: 11010011 .. 0xD3
     buff[0] &= 0x7F; //Sets the write flag
     buff[1] = value;
-    FIFOSPI2_addQueue(buff, 2, 2);
+    FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 }
-void L3G4200D_QueueReadRegister(unsigned char reg)
+void L3G4200D_pushReadRegister(unsigned char reg)
 {
     char buff[3];
     buff[0] = reg;
     //Sets the read flag
     buff[0] |= (1 << 7);
     buff[1] = 0x00; //Fluff
-    FIFOSPI2_addQueue(buff, 2, 2);
+    FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 }
 
 //TODO: Fix so I can get rid of ReceiveBufferIndex function
-void L3G4200D_WriteRegister_Blocking(unsigned char reg, unsigned char value)
+void L3G4200D_writeRegister_Blocking(unsigned char reg, unsigned char value)
 {
     //Control Register one
     char buff[3];
     buff[0] = reg; //Register ADDR.. Defualt return: 11010011 .. 0xD3
     buff[0] &= 0x7F; //Sets the write flag
     buff[1] = value;
-    FIFOSPI2_addQueue(buff, 2, 2);
+    FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 
 
     char func_rslt, read_rslt;
     while (FIFOSPI2_rxBufferIndex() < 2 || FIFOSPI2_isRunnning != 0) {}
-    func_rslt = FIFOSPI2_readQueue(&read_rslt);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
 }
 
 
 //TODO: Change things into unsigned char
-unsigned char L3G4200D_ReadRegister_Blocking(unsigned char reg)
+unsigned char L3G4200D_readRegister_Blocking(unsigned char reg)
 {
     
     char buff[3];
@@ -110,29 +110,29 @@ unsigned char L3G4200D_ReadRegister_Blocking(unsigned char reg)
     //Sets the read flag
     buff[0] |= (1 << 7);
     buff[1] = 0x00; //Fluff
-    FIFOSPI2_addQueue(buff, 2, 2);
+    FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 
     
     //Force wait for the end of the transmission
     char func_rslt, read_rslt;
     while (FIFOSPI2_rxBufferIndex() < 2 || FIFOSPI2_isRunnning != 0) {}
-    func_rslt = FIFOSPI2_readQueue(&read_rslt);
-    func_rslt = FIFOSPI2_readQueue(&read_rslt);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
+    func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
 
     return read_rslt;
 }
 
 
-void L3G4200D_queueReadXYZT()
+void L3G4200D_pushReadXYZT()
 {
     
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTXL);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTXH);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTYL);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTYH);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTZL);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTZH);
-    L3G4200D_QueueReadRegister(L3G4200D_Reg_OUTTEMP);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTXL);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTXH);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTYL);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTYH);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTZL);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTZH);
+    L3G4200D_pushReadRegister(L3G4200D_Reg_OUTTEMP);
     
 }
 
@@ -150,23 +150,23 @@ void L3G4200D_popXYZT()
 
 
     //X axis
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&x_lsb); //X low
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&x_msb); //X hi
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&x_lsb); //X low
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&x_msb); //X hi
     //Y axis
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&y_lsb); //Y low
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&y_msb); //Y hi
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&y_lsb); //Y low
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&y_msb); //Y hi
     //Z axis
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&z_lsb); //Z low
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&z_msb); //Z hi
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&z_lsb); //Z low
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&z_msb); //Z hi
     //Temperature
-    func_rslt = FIFOSPI2_readQueue(&fluff); //fluff
-    func_rslt = FIFOSPI2_readQueue(&temp); //Temp
+    func_rslt = FIFOSPI2_popRxQueue(&fluff); //fluff
+    func_rslt = FIFOSPI2_popRxQueue(&temp); //Temp
     
     
     x_16b = (x_msb << 8) | x_lsb;

@@ -17,7 +17,6 @@ inline int MsgInterpreter_interpret_writeRegisters(uint8 message[]);
 //******************************************************************************
 //Local Function Definitions
 //******************************************************************************
-
 inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
 {
     uint8* temp;

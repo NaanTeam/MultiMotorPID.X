@@ -24,16 +24,16 @@
 //Configuration #defines
 //******************************************************************************
 
-/**@brief Controls the baud rate of the I2C device.*/
+/**Controls the baud rate of the I2C device.*/
 #define FIFOI2C2_BAUD_RATE 100000
 
-/**@brief Controls the maximum number of devices the I2C module supports.
+/**Controls the maximum number of devices the I2C module supports.
  * 
  * @remarks Some modifications to FIFOI2C2_initialize() are required to support
  * more than 5 devices.*/
 #define FIFOI2C2_DEVICES_COUNT 1
 
-/**@brief Controls I2C device 0's 7-bit address.*/
+/**Controls I2C device 0's 7-bit address.*/
 #define FIFOI2C2_DEVICE0_ADDRESS 0x1E  //7 bit address
 /**Controls I2C device 1's 7-bit address*/
 #define FIFOI2C2_DEVICE1_ADDRESS 0x00
@@ -44,13 +44,13 @@
 /**Controls I2C device 4's 7-bit address*/
 #define FIFOI2C2_DEVICE4_ADDRESS 0x00
 
-/**@brief Controls the maximum size of the transmit buffer.
+/**Controls the maximum size of the transmit buffer.
  * 
  * @remarks Insufficient size may lead to lost data or overflows if transmission
  * speed isn't fast enough.*/
 #define FIFOI2C2_TRANSMIT_BUFFER_SIZE 50
 
-/**@brief Controls the maximum size of the receive buffer.
+/**Controls the maximum size of the receive buffer.
  * 
  * @remarks Insufficient size may lead to lost data or overflows if transmission
  * speed isn't fast enough.*/
@@ -59,10 +59,10 @@
 
 
 //******************************************************************************
-// Public Variables and Typedefs
+//Public Typedefs and Enums
 //******************************************************************************
 
-/**@brief Represents an action or step for the I2C Master IRQ to take.
+/**Represents an action or step for the I2C Master IRQ to take.
  *
  * @remarks Some require specific orders to be followed..*/
 typedef enum
@@ -87,7 +87,7 @@ typedef enum
     FIFOI2C2_DEVICE_COMMAND_STOP
 }FIFOI2C2_Device_Commands;
 
-/**@brief Represents a transmit byte from I2C.*/
+/**Represents a transmit byte from I2C.*/
 typedef struct FIFOI2C2_tx_byte
 {
     /**The corresponding byte*/
@@ -96,7 +96,7 @@ typedef struct FIFOI2C2_tx_byte
     FIFOI2C2_Device_Commands device_command;
 }FIFOI2C2_TX_Byte;
 
-/**@brief Represents a received byte from I2C.*/
+/**Represents a received byte from I2C.*/
 typedef struct FIFOI2C2_rx_byte
 {
     /**The read byte*/
@@ -105,7 +105,7 @@ typedef struct FIFOI2C2_rx_byte
     FIFOI2C2_Device_Commands device_command;
 }FIFOI2C2_RX_Byte;
 
-/**@brief Represents a I2C device*/
+/**Represents a I2C device*/
 typedef struct FIFOI2C2_device
 {
     /**The 7-bit address*/
@@ -133,14 +133,14 @@ typedef struct FIFOI2C2_device
 //******************************************************************************
 
 /**
- * @brief Initializes I2C module 2 for interrupt driven communication.
+ * Initializes I2C module 2 for interrupt driven communication.
  *
  * @return void
  */
 void FIFOI2C2_initialize();
 
 /**
- * @brief Adds device commands, with their corresponding byte, to the FIFO I2C
+ * Adds device commands, with their corresponding byte, to the FIFO I2C
  * buffer to be sent over I2C.
  *
  * @param device: The device number (listed in the header file) for the
@@ -152,19 +152,19 @@ void FIFOI2C2_initialize();
  *
  * @return: Returns 1 if successful, -1 if their is an error.
  */
-uint8 FIFOI2C2_addQueue(uint16 device, uint8 byte_buffer[], FIFOI2C2_Device_Commands state_buffer[], uint32 buffer_length);
+uint8 FIFOI2C2_pushTxQueue(uint16 device, uint8 byte_buffer[], FIFOI2C2_Device_Commands state_buffer[], uint32 buffer_length);
 
 /**
- * @brief Reads a single RX_byte from receive buffer.
+ * Reads a single RX_byte from receive buffer.
  *
  * @param device: The device this byte was sent from.
  *
  * @return: An RX_byte from the device receive buffer.
  */
-FIFOI2C2_RX_Byte FIFOI2C2_readQueue(uint16 device);
+FIFOI2C2_RX_Byte FIFOI2C2_popRxQueue(uint16 device);
 
 /**
- * @brief Queues a 'read register' command sequence for I2C in the TX buffer.
+ * Queues a 'read register' command sequence for I2C in the TX buffer.
  *
  * @param device: The device number (listed in the header file) for the
  * commands to be sent to.
@@ -175,10 +175,10 @@ FIFOI2C2_RX_Byte FIFOI2C2_readQueue(uint16 device);
  * @return: Returns 0 if the command sequence was succesively added to
  * the TX buffer, -1 otherwise.
  */
-uint8 FIFOI2C2_addQueue_readDeviceRegisters(uint16 device, uint8 start_register, int number_to_read);
+uint8 FIFOI2C2_pushTxQueue_readDeviceRegisters(uint16 device, uint8 start_register, int number_to_read);
 
 /**
- * @brief Queues a 'write register' command sequence for I2C in the TX buffer.
+ * Queues a 'write register' command sequence for I2C in the TX buffer.
  *
  * @param device: The device number (listed in the header file) for the
  * commands to be sent to.
@@ -190,7 +190,7 @@ uint8 FIFOI2C2_addQueue_readDeviceRegisters(uint16 device, uint8 start_register,
  * @return: Returns 0 if the command sequence was succesively added to
  * the TX buffer, -1 otherwise.
  */
-uint8 FIFOI2C2_addQueue_writeDeviceRegisters(uint16 device, uint8 start_address, uint8 byte_buffer[], uint32 buffer_length);
+uint8 FIFOI2C2_pushTxQueue_writeDeviceRegisters(uint16 device, uint8 start_address, uint8 byte_buffer[], uint32 buffer_length);
 
 #endif	/* FIFOI2C2_H */
 

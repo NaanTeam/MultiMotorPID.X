@@ -1,12 +1,9 @@
-/*
- * File:   HMC5883L.c
- * Author: Connor
- *
- * Created on November 10, 2013, 11:27 PM
- */
 
 #include "HMC5883L.h"
 
+//******************************************************************************
+//Public Variable Declarations
+//******************************************************************************
 
 float HMC5883L_XMagneticVector = 0;
 float HMC5883L_ZMagneticVector = 0;
@@ -14,6 +11,11 @@ float HMC5883L_YMagneticVector = 0;
 int16 HMC5883L_XMagneticVector_Raw = 0;
 int16 HMC5883L_ZMagneticVector_Raw = 0;
 int16 HMC5883L_YMagneticVector_Raw = 0;
+
+
+//******************************************************************************
+//Public Function Definitions
+//******************************************************************************
 
 void HMC5883L_startMeasurements()
 {
@@ -29,21 +31,14 @@ void HMC5883L_startMeasurements()
     //Mode Register
     buffer[2] = 0x00; //cont meaurement mode
 
-    FIFOI2C2_addQueue_writeDeviceRegisters(0, 0x00, buffer, 3);
-
-
-//    //Give it time to start up
-//    while (i < 1000000)
-//    {
-//        i++;
-//    }
+    FIFOI2C2_pushTxQueue_writeDeviceRegisters(0, 0x00, buffer, 3);
 
 }
 
 
-void HMC5883L_queueReadXZY()
+void HMC5883L_pushReadXZY()
 {
-    FIFOI2C2_addQueue_readDeviceRegisters(0, 0x03, 6);
+    FIFOI2C2_pushTxQueue_readDeviceRegisters(0, 0x03, 6);
 }
 
 
@@ -54,14 +49,14 @@ void HMC5883L_popXZY()
     uint8 y_msb = 0, y_lsb = 0;
     short x_tmp = 0, z_tmp = 0, y_tmp= 0;
 
-    x_msb = FIFOI2C2_readQueue(0).rx_byte;
-    x_lsb = FIFOI2C2_readQueue(0).rx_byte;
+    x_msb = FIFOI2C2_popRxQueue(0).rx_byte;
+    x_lsb = FIFOI2C2_popRxQueue(0).rx_byte;
 
-    z_msb = FIFOI2C2_readQueue(0).rx_byte;
-    z_lsb = FIFOI2C2_readQueue(0).rx_byte;
+    z_msb = FIFOI2C2_popRxQueue(0).rx_byte;
+    z_lsb = FIFOI2C2_popRxQueue(0).rx_byte;
 
-    y_msb = FIFOI2C2_readQueue(0).rx_byte;
-    y_lsb = FIFOI2C2_readQueue(0).rx_byte;
+    y_msb = FIFOI2C2_popRxQueue(0).rx_byte;
+    y_lsb = FIFOI2C2_popRxQueue(0).rx_byte;
 
     x_tmp = (x_msb << 8) | x_lsb;
     z_tmp = (z_msb << 8) | z_lsb;

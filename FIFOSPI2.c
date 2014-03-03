@@ -107,7 +107,7 @@ void FIFOSPI2_initialize()
     SPI2CONbits.ON = 1;     //SPI ON
 }
 
-int FIFOSPI2_addQueue(uint8 data[], int length, int deviceSSLine)
+int FIFOSPI2_pushTxQueue(uint8 data[], int length, int deviceSSLine)
 {
     int i = 0;
     //If the send buffer isn't full then add another char
@@ -149,7 +149,7 @@ int FIFOSPI2_addQueue(uint8 data[], int length, int deviceSSLine)
     }
 }
 
-int FIFOSPI2_readQueue(uint8 *bytesBuffer)
+int FIFOSPI2_popRxQueue(uint8 *bytesBuffer)
 {
     //The receive buffer is empty.
     if (RxBuffer_Index == 0)
