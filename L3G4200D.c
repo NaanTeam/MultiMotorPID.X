@@ -12,6 +12,11 @@ float L3G4200D_YAngularRate = 0;
 float L3G4200D_ZAngularRate = 0;
 float L3G4200D_Temperature = 0;
 
+int16 L3G4200D_XAngularRate_Raw = 0;
+int16 L3G4200D_YAngularRate_Raw = 0;
+int16 L3G4200D_ZAngularRate_Raw = 0;
+int16 L3G4200D_Temperature_Raw = 0;
+
 int L3G4200D_startMeasurements()
 {
     //Check to see if we are communicating correctly.
@@ -131,7 +136,7 @@ void L3G4200D_queueReadXYZT()
     
 }
 
-void L3G4200D_interpretXYZT()
+void L3G4200D_popXYZT()
 {
     uint8 func_rslt, fluff;
     
@@ -141,8 +146,7 @@ void L3G4200D_interpretXYZT()
     uint8 temp;
     
     short x_16b = 0, y_16b = 0, z_16b= 0;
-    float dps_per_LSB = 0;
-    float C_per_LSB = 0;
+
 
 
     //X axis
@@ -168,17 +172,27 @@ void L3G4200D_interpretXYZT()
     x_16b = (x_msb << 8) | x_lsb;
     y_16b = (y_msb << 8) | y_lsb;
     z_16b = (z_msb << 8) | z_lsb;
-    
+
+
+    L3G4200D_XAngularRate_Raw = x_16b;
+    L3G4200D_YAngularRate_Raw = -1*y_16b;
+    L3G4200D_ZAngularRate_Raw = -1*z_16b;
+    L3G4200D_Temperature_Raw = temp;
+}
+
+void L3G4200D_convertXYZT()
+{
+    float dps_per_LSB = 0;
+    float C_per_LSB = 0;
+
     //'degress per second' per least significant bit.
     dps_per_LSB = 8.75e-3;//From L3G4200D data sheet (250dps mode)
     //celsius per least significant bit (Check L3G4200D datasheet)
     C_per_LSB = 1;
     
-    L3G4200D_XAngularRate = dps_per_LSB * (float)x_16b;
-    L3G4200D_YAngularRate = dps_per_LSB * (float)y_16b;
-    L3G4200D_ZAngularRate = dps_per_LSB * (float)z_16b;
-    L3G4200D_Temperature = C_per_LSB * (float)temp;
+    L3G4200D_XAngularRate = dps_per_LSB * (float)L3G4200D_XAngularRate_Raw;
+    L3G4200D_YAngularRate = dps_per_LSB * (float)L3G4200D_YAngularRate_Raw;
+    L3G4200D_ZAngularRate = dps_per_LSB * (float)L3G4200D_ZAngularRate_Raw;
+    L3G4200D_Temperature = C_per_LSB * (float)L3G4200D_Temperature_Raw;
     
-
 }
-

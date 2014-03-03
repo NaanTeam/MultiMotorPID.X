@@ -48,11 +48,18 @@ void SensorLoop_SetupAll()
 void __ISR(_TIMER_1_VECTOR, IPL3AUTO) Timer1Handler(void)
 {
 
+    //Interpret the previously read data.
+    ADXL362_interpretXYZT();
+    L3G4200D_popXYZT();
+    HMC5883L_popXZY();
+    
+    //Convert Raw data into meaningful data(optional and potential optimization)
+    ADXL362_convertXYZT();
+    HMC5883L_convertXYZ();
+    L3G4200D_convertXYZT();
 
-    ADXL362_interpretXYZT(); //Interpret the previous one.
-    L3G4200D_interpretXYZT();
-    HMC5883L_interpretXZY();
 
+    //Que reads to the sensors for next timer tick.
     ADXL362_queueReadXYZT();
     L3G4200D_queueReadXYZT();
     HMC5883L_queueReadXZY();

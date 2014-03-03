@@ -161,18 +161,24 @@ extern "C" {
     extern float ADXL362_ZAcceleration;
     extern float ADXL362_Temperature;
 
+    extern int16 ADXL362_XAcceleration_Raw;
+    extern int16 ADXL362_YAcceleration_Raw;
+    extern int16 ADXL362_ZAcceleration_Raw;
+    extern int16 ADXL362_Temperature_Raw;
+
     
     void ADXL362_startMeasurements();
 
     void ADXL362_queueReadXYZT();
-    void ADXL362_interpretXYZT();
+    void ADXL362_popXYZT();
+    void ADXL362_convertXYZT();
 
-    void ADXL362_queueReadMSBX();
-    void ADXL362_interpretMSBX();
-    void ADXL362_queueReadMSBY();
-    void ADXL362_interpretMSBY();
-    void ADXL362_queueReadMSBZ();
-    void ADXL362_InterpretMSBZ();
+//    void ADXL362_queueReadMSBX();
+//    void ADXL362_interpretMSBX();
+//    void ADXL362_queueReadMSBY();
+//    void ADXL362_interpretMSBY();
+//    void ADXL362_queueReadMSBZ();
+//    void ADXL362_InterpretMSBZ();
 
 
 

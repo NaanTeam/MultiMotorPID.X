@@ -17,6 +17,7 @@
 #include "L3G4200D.h"
 #include "FIFOSPI2.h"
 #include "HMC5883L.h"
+#include "Orientation.h"
 
 
 // <editor-fold defaultstate="collapsed" desc="Config Bits">
@@ -147,7 +148,7 @@ void DelayTime(int inter)
 
 int main(int argc, char** argv)
 {
-
+    //DDPCONbits.JTAGEN = 0;
     SensorLoop_SetupAll();
     CommunicationLoop_initialize();
     // Enable multi-vector interrupts
@@ -155,6 +156,7 @@ int main(int argc, char** argv)
     //Turn on Interrupts
     INTEnableInterrupts();
 
+    OrientationLoop_setup();
 
     //Give it some time to start up
     DelayTime(100);
@@ -166,7 +168,7 @@ int main(int argc, char** argv)
     //Start Orientation/PID Loop
     while(1)
     {
-        Orientation_Calculate();
+        Orientation_Update();
         DelayTime(100);
         //Gather Orientation
         //Get radio controller offsets

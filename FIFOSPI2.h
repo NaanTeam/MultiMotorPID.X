@@ -35,14 +35,14 @@ extern "C" {
 //******************************************************************************
 
 /**@brief Controls the slave select pin for the first device on SPI-2 line.*/
-#define FIFOSPI2_DeviceSSLine1_PortReg PORTDbits.RD4
+#define FIFOSPI2_DeviceSSLine1_PortReg PORTEbits.RE0
 /**@brief Match this to the corresponding FIFOSPI2_DeviceSSLine1_PortReg.*/
-#define FIFOSPI2_DeviceSSLine1_TriState TRISDbits.TRISD4
+#define FIFOSPI2_DeviceSSLine1_TriState TRISEbits.TRISE0
 
 /**@brief Controls the slave select pin for the second device on SPI-2 line.*/
-#define FIFOSPI2_DeviceSSLine2_PortReg PORTDbits.RD3
+#define FIFOSPI2_DeviceSSLine2_PortReg PORTEbits.RE1
 /**@brief Match this to the corresponding FIFOSPI2_DeviceSSLine2_PortReg.*/
-#define FIFOSPI2_DeviceSSLine2_TriState TRISDbits.TRISD3
+#define FIFOSPI2_DeviceSSLine2_TriState TRISEbits.TRISE1
 
 /**@brief Controls the maximum transmit and receive buffer sizes.*/
 #define FIFOSPI2_BUFFERSIZE 100

@@ -11,7 +11,9 @@
 float HMC5883L_XMagneticVector = 0;
 float HMC5883L_ZMagneticVector = 0;
 float HMC5883L_YMagneticVector = 0;
-
+int16 HMC5883L_XMagneticVector_Raw = 0;
+int16 HMC5883L_ZMagneticVector_Raw = 0;
+int16 HMC5883L_YMagneticVector_Raw = 0;
 
 void HMC5883L_startMeasurements()
 {
@@ -45,13 +47,12 @@ void HMC5883L_queueReadXZY()
 }
 
 
-void HMC5883L_interpretXZY()
+void HMC5883L_popXZY()
 {
     uint8 x_msb = 0, x_lsb = 0;
     uint8 z_msb = 0, z_lsb = 0;
     uint8 y_msb = 0, y_lsb = 0;
     short x_tmp = 0, z_tmp = 0, y_tmp= 0;
-    float gauss_per_LSB = 0;
 
     x_msb = FIFOI2C2_readQueue(0).rx_byte;
     x_lsb = FIFOI2C2_readQueue(0).rx_byte;
@@ -66,12 +67,20 @@ void HMC5883L_interpretXZY()
     z_tmp = (z_msb << 8) | z_lsb;
     y_tmp = (y_msb << 8) | y_lsb;
 
+    HMC5883L_XMagneticVector_Raw = x_tmp;
+    HMC5883L_ZMagneticVector_Raw = -1*z_tmp;
+    HMC5883L_YMagneticVector_Raw = -1*y_tmp;
+}
+
+void HMC5883L_convertXYZ()
+{
+    float gauss_per_LSB = 0;
+
     //Based on devie 'Mode Register.' Refer to HMC5883L data sheet.
     gauss_per_LSB = 0.92e-3;
 
-    HMC5883L_XMagneticVector = gauss_per_LSB * (float)x_tmp;
-    HMC5883L_ZMagneticVector = gauss_per_LSB * (float)z_tmp;
-    HMC5883L_YMagneticVector = gauss_per_LSB * (float)y_tmp;
-
+    HMC5883L_XMagneticVector = gauss_per_LSB * (float)HMC5883L_XMagneticVector_Raw;
+    HMC5883L_ZMagneticVector = gauss_per_LSB * (float)HMC5883L_ZMagneticVector_Raw;
+    HMC5883L_YMagneticVector = gauss_per_LSB * (float)HMC5883L_YMagneticVector_Raw;
 }
 

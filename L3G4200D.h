@@ -74,7 +74,19 @@ extern "C" {
     /**Global variable that contains gyroscope's Z-axis data.*/
     extern float L3G4200D_ZAngularRate;
     /**Global variable that contains gyroscope's temperature data.*/
-    extern float L3G4200D_Temperature; // </editor-fold>
+    extern float L3G4200D_Temperature;
+
+    /**Global variable that contains gyroscope's X-axis raw data.*/
+    extern int16 L3G4200D_XAngularRate_Raw;
+    /**Global variable that contains gyroscope's Y-axis raw data.*/
+    extern int16 L3G4200D_YAngularRate_Raw;
+    /**Global variable that contains gyroscope's Z-axis raw data.*/
+    extern int16 L3G4200D_ZAngularRate_Raw;
+    /**Global variable that contains gyroscope's temperature raw data.*/
+    extern int16 L3G4200D_Temperature_Raw;
+
+
+    // </editor-fold>
 
 
     // <editor-fold defaultstate="collapsed" desc="Function prototypes">
@@ -118,10 +130,16 @@ extern "C" {
      */
     void L3G4200D_queueReadXYZT();
     /**
-     * Interpret's the read X, Y, Z and temperature data register command for
-     * the L3G4200D from the FIFOSPI buffer.
+     * Pops the read X, Y, Z and temperature data register command for
+     * the L3G4200D from the FIFOSPI buffer into the global raw variables.
      */
-    void L3G4200D_interpretXYZT(); // </editor-fold>
+    void L3G4200D_popXYZT();
+
+    /**
+     * Converts from raw gyro XYZT values to global variables.
+     */
+    void L3G4200D_convertXYZT();
+    // </editor-fold>
 
 
 #ifdef	__cplusplus

@@ -36,8 +36,6 @@ inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
 
             //Accelerometer
             case SERIALCOMM_REGISTER_XAcceleration:
-//                buffer_len = sprintf (buffer, "%f", ADXL362_XAcceleration);
-//                FIFOUART1_pushTxQueue(buffer, buffer_len);
                 temp = (uint8*)(&ADXL362_XAcceleration);
                 buffer[buffer_len++] = temp[0];
                 buffer[buffer_len++] = temp[1];
@@ -65,6 +63,28 @@ inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
                 buffer[buffer_len++] = temp[2];
                 buffer[buffer_len++] = temp[3];
                 break;
+
+            case SERIALCOMM_REGISTER_XAcceleration_Raw:
+                temp = (uint8*)(&ADXL362_XAcceleration_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_YAcceleration_Raw:
+                temp = (uint8*)(&ADXL362_YAcceleration_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_ZAcceleration_Raw:
+                temp = (uint8*)(&ADXL362_ZAcceleration_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_AcceloTemperature_Raw:
+                temp = (uint8*)(&ADXL362_Temperature_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+
 
             //Gyroscope
             case SERIALCOMM_REGISTER_XAngularRate:
@@ -96,6 +116,28 @@ inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
                 buffer[buffer_len++] = temp[3];
                 break;
 
+            case SERIALCOMM_REGISTER_XAngularRate_Raw:
+                temp = (uint8*)(&L3G4200D_XAngularRate_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_YAngularRate_Raw:
+                temp = (uint8*)(&L3G4200D_YAngularRate_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_ZAngularRate_Raw:
+                temp = (uint8*)(&L3G4200D_ZAngularRate_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_GyroTemperature_Raw:
+                temp = (uint8*)(&L3G4200D_Temperature_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+
+
             //3-axis Compass
             case SERIALCOMM_REGISTER_XMagneticVector:
                 temp = (uint8*)(&HMC5883L_XMagneticVector);
@@ -118,6 +160,24 @@ inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
                 buffer[buffer_len++] = temp[2];
                 buffer[buffer_len++] = temp[3];
                 break;
+
+           case SERIALCOMM_REGISTER_XMagneticVector_Raw:
+                temp = (uint8*)(&HMC5883L_XMagneticVector_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_YMagneticVector_Raw:
+                temp = (uint8*)(&HMC5883L_YMagneticVector_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+            case SERIALCOMM_REGISTER_ZMagneticVector_Raw:
+                temp = (uint8*)(&HMC5883L_ZMagneticVector_Raw);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+
+
 
             case SERIALCOMM_REGISTER_Pitch:
                 temp = (uint8*)(&Orientation_Pitch);

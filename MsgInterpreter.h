@@ -28,6 +28,7 @@ extern "C" {
     #include "L3G4200D.h"
     #include "HMC5883L.h"
     #include "FIFOUART1.h"
+    #include "DCM.h"
     #include "Orientation.h"
 
     #define SERIALCOMM_MAX_TX_BUFFER 1024
@@ -46,14 +47,31 @@ extern "C" {
     #define SERIALCOMM_REGISTER_ZAcceleration       0x12
     #define SERIALCOMM_REGISTER_AcceloTemperature   0x13
 
+    #define SERIALCOMM_REGISTER_XAcceleration_Raw       0x14
+    #define SERIALCOMM_REGISTER_YAcceleration_Raw       0x15
+    #define SERIALCOMM_REGISTER_ZAcceleration_Raw       0x16
+    #define SERIALCOMM_REGISTER_AcceloTemperature_Raw   0x17
+
+
     #define SERIALCOMM_REGISTER_XAngularRate        0x20
     #define SERIALCOMM_REGISTER_YAngularRate        0x21
     #define SERIALCOMM_REGISTER_ZAngularRate        0x22
     #define SERIALCOMM_REGISTER_GyroTemperature     0x23
 
+    #define SERIALCOMM_REGISTER_XAngularRate_Raw        0x24
+    #define SERIALCOMM_REGISTER_YAngularRate_Raw        0x25
+    #define SERIALCOMM_REGISTER_ZAngularRate_Raw        0x26
+    #define SERIALCOMM_REGISTER_GyroTemperature_Raw     0x27
+
+
     #define SERIALCOMM_REGISTER_XMagneticVector     0x30
     #define SERIALCOMM_REGISTER_YMagneticVector     0x31
     #define SERIALCOMM_REGISTER_ZMagneticVector     0x32
+
+    #define SERIALCOMM_REGISTER_XMagneticVector_Raw     0x33
+    #define SERIALCOMM_REGISTER_YMagneticVector_Raw     0x34
+    #define SERIALCOMM_REGISTER_ZMagneticVector_Raw     0x35
+
 
     #define SERIALCOMM_REGISTER_Pitch               0x40
     #define SERIALCOMM_REGISTER_Yaw                 0x41

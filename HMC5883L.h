@@ -19,11 +19,15 @@ extern "C" {
     extern float HMC5883L_ZMagneticVector;
     extern float HMC5883L_YMagneticVector;
 
+    extern int16 HMC5883L_XMagneticVector_Raw;
+    extern int16 HMC5883L_ZMagneticVector_Raw;
+    extern int16 HMC5883L_YMagneticVector_Raw;
+
 
     void HMC5883L_startMeasurements();
     void HMC5883L_queueReadXZY();
-    void HMC5883L_interpretXZY();
-
+    void HMC5883L_popXZY();
+    void HMC5883L_convertXYZ();
 
 #ifdef	__cplusplus
 }
