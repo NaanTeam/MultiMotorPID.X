@@ -118,7 +118,7 @@ void ADXL362_interpretXYZT()
     z_16b = (z_msb << 8) | z_lsb;
     temp_16b = (temp_msb << 8) | temp_lsb;
 
-    ADXL362_XAcceleration_Raw = x_16b;
+    ADXL362_XAcceleration_Raw = -1*x_16b  ;
     ADXL362_YAcceleration_Raw = y_16b;
     ADXL362_ZAcceleration_Raw = z_16b;
     ADXL362_Temperature_Raw = temp_16b;

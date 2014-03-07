@@ -63,8 +63,8 @@ void HMC5883L_popXZY()
     y_tmp = (y_msb << 8) | y_lsb;
 
     HMC5883L_XMagneticVector_Raw = x_tmp;
-    HMC5883L_ZMagneticVector_Raw = -1*z_tmp;
     HMC5883L_YMagneticVector_Raw = -1*y_tmp;
+    HMC5883L_ZMagneticVector_Raw = -1*z_tmp;
 }
 
 void HMC5883L_convertXYZ()

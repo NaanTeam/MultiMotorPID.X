@@ -62,16 +62,26 @@ void DCM_matrixUpdate(float timeDiff, float* gyroRadSec)
     Vector_Add(&Omega_Vector[0], &Omega[0], &Omega_P[0]); //adding Integrator term
 
 
-    Update_Matrix[0][0]=0;
-    Update_Matrix[0][1]=-timeDiff*gyroRadSec[2];//-z
-    Update_Matrix[0][2]=timeDiff*gyroRadSec[1];//y
-    Update_Matrix[1][0]=timeDiff*gyroRadSec[2];//z
-    Update_Matrix[1][1]=0;
-    Update_Matrix[1][2]=-timeDiff*gyroRadSec[0];//-x
-    Update_Matrix[2][0]=-timeDiff*gyroRadSec[1];//-y
-    Update_Matrix[2][1]=timeDiff*gyroRadSec[0];//x
-    Update_Matrix[2][2]=0;
-
+//    Update_Matrix[0][0]=0;
+//    Update_Matrix[0][1]=-timeDiff*gyroRadSec[2];//-z
+//    Update_Matrix[0][2]=timeDiff*gyroRadSec[1];//y
+//    Update_Matrix[1][0]=timeDiff*gyroRadSec[2];//z
+//    Update_Matrix[1][1]=0;
+//    Update_Matrix[1][2]=-timeDiff*gyroRadSec[0];//-x
+//    Update_Matrix[2][0]=-timeDiff*gyroRadSec[1];//-y
+//    Update_Matrix[2][1]=timeDiff*gyroRadSec[0];//x
+//    Update_Matrix[2][2]=0;
+//
+    //drift correction
+  Update_Matrix[0][0]=0;
+  Update_Matrix[0][1]=-timeDiff*Omega_Vector[2];//-z
+  Update_Matrix[0][2]=timeDiff*Omega_Vector[1];//y
+  Update_Matrix[1][0]=timeDiff*Omega_Vector[2];//z
+  Update_Matrix[1][1]=0;
+  Update_Matrix[1][2]=-timeDiff*Omega_Vector[0];//-x
+  Update_Matrix[2][0]=-timeDiff*Omega_Vector[1];//-y
+  Update_Matrix[2][1]=timeDiff*Omega_Vector[0];//x
+  Update_Matrix[2][2]=0;
 
     Matrix_Multiply(DCM_Matrix,Update_Matrix,Temporary_Matrix); //a*b=c
 

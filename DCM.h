@@ -30,7 +30,7 @@ extern "C" {
     //#define Ki_ROLLPITCH 0.000010
 
     #define Kp_ROLLPITCH 1.515/GRAVITY
-    #define Ki_ROLLPITCH 0.00101/GRAVITY
+    #define Ki_ROLLPITCH 0.0101/GRAVITY
 
     #define Kp_YAW 1.2
     //#define Kp_YAW 2.5      //High yaw drift correction gain - use with caution!

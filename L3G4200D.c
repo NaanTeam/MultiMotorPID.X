@@ -174,7 +174,7 @@ void L3G4200D_popXYZT()
     z_16b = (z_msb << 8) | z_lsb;
 
 
-    L3G4200D_XAngularRate_Raw = x_16b;
+    L3G4200D_XAngularRate_Raw = x_16b  ;
     L3G4200D_YAngularRate_Raw = -1*y_16b;
     L3G4200D_ZAngularRate_Raw = -1*z_16b;
     L3G4200D_Temperature_Raw = temp;

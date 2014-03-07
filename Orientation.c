@@ -3,11 +3,6 @@
 
 
 
-
-
-
-
-
 float Orientation_Roll = 0.0;
 float Orientation_Pitch = 0.0;
 float Orientation_Yaw = 0.0;
@@ -50,7 +45,7 @@ void Orientation_Update()
 
 
     //Convery DCM into euler angles
-    DCM_eulerAngle(&Orientation_Pitch, &Orientation_Yaw, &Orientation_Roll);
+    DCM_eulerAngle(&Orientation_Roll, &Orientation_Pitch, &Orientation_Yaw);
 
 }
 
@@ -152,7 +147,6 @@ void OrientationLoop_setup()
 }
 
 
-//TODO KNOWN BUG: with SPI. Reordering ADXl and L3G will make L3G's reading bad.
 
 //IRQ for timer1. Used for polling sensors.
 void __ISR(_TIMER_5_VECTOR, IPL3AUTO) Timer5Handler(void)
