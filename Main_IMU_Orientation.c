@@ -130,10 +130,11 @@
  *      10 = PBCLK is SYSCLK divided by 4
  *      01 = PBCLK is SYSCLK divided by 2
  *      00 = PBCLK is SYSCLK divided by 1*/
-#pragma config FPBDIV   = DIV_8
+#pragma config FPBDIV   = DIV_4
 // </editor-fold>
 
-
+// SYSCLK = 80 MHz (8MHz Crystal/ FPLLIDIV * FPLLMUL / FPLLODIV) (8/2  * 20/1)
+//Peripheral Clock: 20E9
 
 void DelayTime(int inter)
 {

@@ -44,7 +44,7 @@ extern "C" {
 /**Match this to the corresponding FIFOSPI2_DeviceSSLine2_PortReg.*/
 #define FIFOSPI2_DeviceSSLine2_TriState TRISEbits.TRISE1
 
-/**Controls the maximum transmit and receive buffer sizes.*/
+/**Controls the maximum transmit and receive buffer sizes. Must be greater than 50*/
 #define FIFOSPI2_BUFFERSIZE 100
 
 

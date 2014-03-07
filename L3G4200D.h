@@ -38,6 +38,8 @@ extern "C" {
 //******************************************************************************
 /**Device identification registe.r*/
 #define L3G4200D_Reg_WHOAMI  0x0F
+
+
     /**Control register one.*/
 #define L3G4200D_Reg_CTRLREG1  0x20
     /**Output Data Rate selection.*/
@@ -52,18 +54,64 @@ extern "C" {
 #define L3G4200D_RegBit_Yen 1
     /**x axis enable.*/
 #define L3G4200D_RegBit_Xen 0
+
+
     /**Control register two.*/
 #define L3G4200D_Reg_CTRLREG2  0x21
+    /**High Pass filter Mode Selection.*/
+#define L3G4200D_RegBit_HPM 4
+    /**High Pass filter Cut Off frequency selection.*/
+#define L3G4200D_RegBit_HPCF 0
+
+
     /**Control register three.*/
 #define L3G4200D_Reg_CTRLREG3  0x22
+    /**Interrupt enable on INT1 pin. Default value 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I1_Int1 7
+    /**Boot status available on INT1. Default value 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I1_Boot 6
+    /**Interrupt active configuration on INT1. Default value 0. (0: High; 1:Low)*/
+#define L3G4200D_RegBit_H_Lactive 5
+    /**Push- Pull / Open drain. Default value: 0. (0: Push- Pull; 1: Open drain)*/
+#define L3G4200D_RegBit_PP_OD 4
+    /**Date Ready on DRDY/INT2. Default value 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I2_DRDY 3
+    /**FIFO Watermark interrupt on DRDY/INT2. Default value: 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I2_WTM  2
+    /**FIFO Overrun interrupt on DRDY/INT2 Default value: 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I2_ORun 1
+    /**FIFO Empty interrupt on DRDY/INT2. Default value: 0. (0: Disable; 1: Enable)*/
+#define L3G4200D_RegBit_I2_Empty 1
+
+
     /**Control register four.*/
 #define L3G4200D_Reg_CTRLREG4  0x23
-    /** Full Scale Selection. 2 bits.*/
+    /**Block Data Update. Default value: 0. (0: continous update; 1: output registers not updated until MSB and LSB reading)*/
+#define L3G4200D_RegBit_BDU 7
+    /**Big/Little Endian Data Selection. Default value 0. (0: Data LSB @ lower address; 1: Data MSB @ lower address)*/
+#define L3G4200D_RegBit_BLE 6
+    /**Full Scale selection. Default value: 00. (00: 250 dps; 01: 500 dps; 10: 2000 dps; 11: 2000 dps)*/
 #define L3G4200D_RegBit_FS 4
-    /** Self Test. 2 bits.*/
+    /**Self Test Enable. Default value: 00. (00: Self Test Disabled;*/
 #define L3G4200D_RegBit_ST 1
+    /**SPI Serial Interface Mode selection. Default value: 0. (0: 4-wire interface; 1: 3-wire interface).*/
+#define L3G4200D_RegBit_SIM 0
+
+
     /**Control register five.*/
 #define L3G4200D_Reg_CTRLREG5  0x24
+    /**Reboot memory content. Default value: 0. (0: normal mode; 1: reboot memory content)*/
+#define L3G4200D_RegBit_BOOT 7
+    /**FIFO enable. Default value: 0. (0: FIFO disable; 1: FIFO Enable) */
+#define L3G4200D_RegBit_FIFO_EN 6
+    /**High Pass filter Enable. Default value: 0. (0: HPF disabled; 1: HPF enabled.)*/
+#define L3G4200D_RegBit_HPen 4
+    /**INT1 selection configuration. Default value: 0*/
+#define L3G4200D_RegBit_INT1_Sel 2
+    /**Out selection configuration. Default value: 0*/
+#define L3G4200D_RegBit_Out_Sel 0
+
+
     /**Reference value register for Interrupt generation.*/
 #define L3G4200D_Reg_REF  0x25
     /**Temperature data register.*/
@@ -121,12 +169,12 @@ int L3G4200D_startMeasurements();
  * @param reg: The register to write to.
  * @param value: The value to write to the register.
  */
-void L3G4200D_pushWriteRegister(unsigned char reg, unsigned char value);
+void L3G4200D_pushWriteRegister(uint8 reg, uint8 value);
 /**
  * Queues a read-register command for the L3G4200D in the FIFOSPI buffer.
  * @param reg: The register to write to.
  */
-void L3G4200D_pushReadRegister(unsigned char reg);
+void L3G4200D_pushReadRegister(uint8 reg);
 
 /**
  * Queues a write-register command for the L3G4200D in the FIFOSPI buffer
@@ -134,7 +182,7 @@ void L3G4200D_pushReadRegister(unsigned char reg);
  * @param reg: The register to write to.
  * @param value: The value to write to the register.
  */
-void L3G4200D_writeRegister_Blocking(unsigned char reg, unsigned char value);
+void L3G4200D_writeRegister_Blocking(uint8 reg, uint8 value);
 /**
  * Queues a read-register command for the L3G4200D in the FIFOSPI buffer
  * then waits for the transmission to complete.
@@ -142,7 +190,7 @@ void L3G4200D_writeRegister_Blocking(unsigned char reg, unsigned char value);
  * @param value: The value to write to the register.
  * @return The read unsigned character.
  */
-unsigned char L3G4200D_readRegister_Blocking(unsigned char reg);
+uint8 L3G4200D_readRegister_Blocking(uint8 reg);
 
 /**
  * Queues a read X, Y, Z and temperature data register command for the

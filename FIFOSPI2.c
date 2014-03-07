@@ -73,7 +73,7 @@ void FIFOSPI2_initialize()
     SPI2STATbits.SPIROV = 0;   // clear the Overflow
     
     //Set the prescale (Note: ADXL362 recommends 1 MHz to 5 MHz)
-    SPI2BRG = 1;        // use FPB/4 clock frequency = 2.5Mhz
+    SPI2BRG = 1;        // use FPB/4 clock frequency = 5Mhz
     //      F_ SCK = F_PB / (2 * (SPIxBRG + 1))
     //          F_SCK: SPI clock freq
     //          F_PB: peripheral clock freq

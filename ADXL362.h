@@ -113,6 +113,7 @@ extern "C" {
 #define ADXL362_INACT_DC        0x00
 #define ADXL362_ACT_INACT_LINK  0x10
 #define ADXL362_ACT_INACT_LOOP  0x20
+#define ADXL362_ACT_INACT_DEFAULT  0x00
 
 /* Bit values in FIFO_CTL  (4 bits allocated)                            */
 #define ADXL362_FIFO_MODE_OFF     0x00
@@ -197,7 +198,8 @@ extern int16 ADXL362_Temperature_Raw;
 //Function Prototypes
 //******************************************************************************
 /**
- * Turns on the ADXL362 device and has it begin measuring data.
+ * Turns on the ADXL362 device in: Ultra low noise, half bandwidth anti aliaising,
+ * 400hz data rate, no activity or inactivity thresholds. (200hz sampling rate)
  */
 void ADXL362_startMeasurements();
 

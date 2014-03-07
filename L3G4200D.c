@@ -19,6 +19,7 @@ int16 L3G4200D_Temperature_Raw = 0;
 //******************************************************************************
 int L3G4200D_startMeasurements()
 {
+    uint8 command = 0;
     //Check to see if we are communicating correctly.
     if (L3G4200D_readRegister_Blocking(L3G4200D_Reg_WHOAMI) != 0xD3)
     {
@@ -26,56 +27,78 @@ int L3G4200D_startMeasurements()
     }
 
 
-    unsigned char CtrlReg1 = 0;
-    //Basicaly turn the device on.
-    CtrlReg1 |= 0x00 |
-            (0 << L3G4200D_RegBit_DR) | //100 hz ODR
-            (0 << L3G4200D_RegBit_BW) | //12.5 Cutoff
+    //CtrlReg1: Basic config
+    command = 0x00 |
+            (3 << L3G4200D_RegBit_DR) | //ODR (800 hz)
+            (0 << L3G4200D_RegBit_BW) | //30 Cutoff
             (1 << L3G4200D_RegBit_PD) | //Turn's off Power Down
             (1 << L3G4200D_RegBit_Zen) | //Enables Z axis
             (1 << L3G4200D_RegBit_Yen) | //Enables Y axis
             (1 << L3G4200D_RegBit_Xen); //Enables X axis
-    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG1, CtrlReg1);
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG1, command);
 
 
-    //High Pass filter Settings
-    unsigned char CtrlReg2 = 0;
-    CtrlReg2 |= 0;
-    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG2, CtrlReg2);
+    //CtrlReg2: Filter Settings
+    command = 0x00 |
+            (0 << L3G4200D_RegBit_HPM) | //High Pass filter Mode Selection.
+            (0 << L3G4200D_RegBit_HPCF); //High Pass filter Cut Off frequency selection
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG2, command);
 
 
-    //Interupt and FIFO Stuff
-    unsigned char CtrlReg3 = 0;
-    CtrlReg3 |= 0;
-    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG3, CtrlReg3);
+    //CtrlReg3: Interupt Stuff
+    command = 0x00 |
+            (0 << L3G4200D_RegBit_I1_Int1) |
+            (0 << L3G4200D_RegBit_I1_Boot) |
+            (0 << L3G4200D_RegBit_H_Lactive) |
+            (0 << L3G4200D_RegBit_PP_OD) |
+            (0 << L3G4200D_RegBit_I2_DRDY) |
+            (0 << L3G4200D_RegBit_I2_WTM) |
+            (0 << L3G4200D_RegBit_I2_ORun) |
+            (0 << L3G4200D_RegBit_I2_Empty) ;
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG3, command);
 
 
-    //Data update, endian mode, scale selection, self test, SPI wire mode
-    unsigned char CtrlReg4 = 0;
-    CtrlReg4 |= 0x00 |
-            (0 << L3G4200D_RegBit_FS); //Full scale selection of 250 dps.
-    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG4, CtrlReg4);
+    //CtrlReg4: Data update, endian mode, scale selection, self test, SPI wire mode
+    command = 0x00 |
+            (0 << L3G4200D_RegBit_BDU) | //Continous block data update
+            (0 << L3G4200D_RegBit_BLE) | //LSB @ lower address
+            (1 << L3G4200D_RegBit_FS) | //500dps mode
+            (0 << L3G4200D_RegBit_ST) | //Self Test disabled
+            (0 << L3G4200D_RegBit_SIM); //4 wire SPI mode
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG4, command);
 
     
-    //reboot, fifo enable, interupt stuff
-    unsigned char CtrlReg5 = 0;
-    CtrlReg5 |= 0;
-    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG5, CtrlReg5);
+    //CtrlReg5: reboot, fifo enable, interupt stuff
+    command = 0x00 |
+            (0 << L3G4200D_RegBit_BOOT) |   //Don't reboot memory content
+            (0 << L3G4200D_RegBit_FIFO_EN) | //FIFO diabled
+            (0 << L3G4200D_RegBit_HPen) |    //HPF disabled
+            (0 << L3G4200D_RegBit_INT1_Sel) | //Non-high-pass-filtered data are used for interrupt generation
+            (0 << L3G4200D_RegBit_Out_Sel);   //Data in DataReg and FIFO are non-highpass-filtered
+    L3G4200D_writeRegister_Blocking(L3G4200D_Reg_CTRLREG5, command);
+
+
+    //FIFO Control Register
+    //FIFO Source Reg
+    //Interupt Control Reg
+    //Interrupt Control Src
+    //Interrupt threshold/duration values
+
 
 }
 
-void L3G4200D_pushWriteRegister(unsigned char reg, unsigned char value)
+void L3G4200D_pushWriteRegister(uint8 reg, uint8 value)
 {
     //Control Register one
-    char buff[3];
+    uint8 buff[3];
     buff[0] = reg; //Register ADDR.. Defualt return: 11010011 .. 0xD3
     buff[0] &= 0x7F; //Sets the write flag
     buff[1] = value;
     FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 }
-void L3G4200D_pushReadRegister(unsigned char reg)
+void L3G4200D_pushReadRegister(uint8 reg)
 {
-    char buff[3];
+    uint8 buff[3];
     buff[0] = reg;
     //Sets the read flag
     buff[0] |= (1 << 7);
@@ -84,17 +107,17 @@ void L3G4200D_pushReadRegister(unsigned char reg)
 }
 
 //TODO: Fix so I can get rid of ReceiveBufferIndex function
-void L3G4200D_writeRegister_Blocking(unsigned char reg, unsigned char value)
+void L3G4200D_writeRegister_Blocking(uint8 reg, uint8 value)
 {
     //Control Register one
-    char buff[3];
+    uint8 buff[3];
     buff[0] = reg; //Register ADDR.. Defualt return: 11010011 .. 0xD3
     buff[0] &= 0x7F; //Sets the write flag
     buff[1] = value;
     FIFOSPI2_pushTxQueue(buff, 2, L3G4200D_SLAVE_SELECT_LINE);
 
 
-    char func_rslt, read_rslt;
+    uint8 func_rslt, read_rslt;
     while (FIFOSPI2_rxBufferIndex() < 2 || FIFOSPI2_isRunnning != 0) {}
     func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
     func_rslt = FIFOSPI2_popRxQueue(&read_rslt);
@@ -102,10 +125,10 @@ void L3G4200D_writeRegister_Blocking(unsigned char reg, unsigned char value)
 
 
 //TODO: Change things into unsigned char
-unsigned char L3G4200D_readRegister_Blocking(unsigned char reg)
+uint8 L3G4200D_readRegister_Blocking(uint8 reg)
 {
     
-    char buff[3];
+    uint8 buff[3];
     buff[0] = reg; 
     //Sets the read flag
     buff[0] |= (1 << 7);
@@ -186,7 +209,8 @@ void L3G4200D_convertXYZT()
     float C_per_LSB = 0;
 
     //'degress per second' per least significant bit.
-    dps_per_LSB = 8.75e-3;//From L3G4200D data sheet (250dps mode)
+    //dps_per_LSB = 8.75e-3;//From L3G4200D data sheet (250dps mode)
+    dps_per_LSB = 17.5e-3;//From L3G4200D data sheet (500dps mode)
     //celsius per least significant bit (Check L3G4200D datasheet)
     C_per_LSB = 1;
     

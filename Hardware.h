@@ -14,10 +14,10 @@ extern "C" {
     
     #if defined (__32MX695F512L__) || (__32MX320F128H__)
 
-        #define SYS_FREQ (80000000L)
+        #define SYS_FREQ (80000000uL)
         #define GetSystemClock()           (SYS_FREQ)
-        #define GetPeripheralClock()       (SYS_FREQ/(1 << OSCCONbits.PBDIV))
         #define GetInstructionClock()      (SYS_FREQ)
+        #define GetPeripheralClock()       (SYS_FREQ/(1 << OSCCONbits.PBDIV))
 
     #endif
     

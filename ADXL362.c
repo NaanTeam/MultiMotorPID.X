@@ -20,57 +20,153 @@ int16 ADXL362_Temperature_Raw = 0;
 //******************************************************************************
 void ADXL362_startMeasurements()
 {
-    //Reset the device
-    
-    char func_rslt, read_rslt1;
-    char reset[3];
-    reset[0] = ADXL362_REG_WRITE;
-    reset[1] = ADXL362_SOFT_RESET;
-    reset[2] = ADXL362_SOFT_RESET_KEY; //Represents the letter r
-    FIFOSPI2_pushTxQueue(reset, 3, ADXL362_SLAVE_SELECT_LINE);
-    //Wait for the device to reset
     int i = 0;
-    while (i < (1000))
-    {
-        i++;
-    }
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+    uint8 func_rslt, read_rslt1;
+    uint8 command[3];
 
 
-    //Turns on Measurement Mode
-    char measurementMode[3];
-    measurementMode[0] = ADXL362_REG_WRITE;
-    measurementMode[1] = ADXL362_POWER_CTL;
-    measurementMode[2] = 0x00 |
+    //Reset the Device
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_SOFT_RESET;
+    command[2] = ADXL362_SOFT_RESET_KEY; //Represents the letter r
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+//    //Wait for the device to reset
+//    while (i < (1000))
+//    {
+//        i++;
+//    }
+//    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+//    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+//    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+
+
+    //Configure Activity Threshold 8 LSB, 3 MSB
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_THRESH_ACTL;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_THRESH_ACTH;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Activity Time Threshold 8 LSB
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_TIME_ACT;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Inactivity Threshold 8 LSB, 3 MSB
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_THRESH_INACTL;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_THRESH_INACTH;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Inactivity Time 8 LSB, 8 MSB
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_TIME_INACTL;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_TIME_INACTH;
+    command[2] = 0;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Activity Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_ACT_INACT_CTL;
+    command[2] = 0x00 |
+            ADXL362_ACT_DISABLE | ADXL362_ACT_DC | ADXL362_INACT_DISABLE |
+            ADXL362_INACT_DC | ADXL362_ACT_INACT_DEFAULT;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure FIFIO Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_FIFO_CONTROL;
+    command[2] = 0x00 |
+            ADXL362_FIFO_MODE_OFF;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    //Configure FIFIO Samples Register (max # of values to store in FIFO)
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_FIFO_SAMPLES;
+    command[2] = 0x80;
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure INT1 Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_INTMAP1;
+    command[2] = 0x00 ;
+//            (ADXL362_INT_DATA_READY) | (ADXL362_INT_FIFO_READY) | 
+//            (ADXL362_INT_FIFO_WATERMARK) | (ADXL362_INT_FIFO_OVERRUN) | 
+//            (ADXL362_INT_ACT) | (ADXL362_INT_INACT) | 
+//            (ADXL362_INT_AWAKE) | (ADXL362_INT_LOW);
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    //Configure INT2 Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_INTMAP2;
+    command[2] = 0x00 ;
+//            (ADXL362_INT_DATA_READY) | (ADXL362_INT_FIFO_READY) | 
+//            (ADXL362_INT_FIFO_WATERMARK) | (ADXL362_INT_FIFO_OVERRUN) | 
+//            (ADXL362_INT_ACT) | (ADXL362_INT_INACT) | 
+//            (ADXL362_INT_AWAKE) | (ADXL362_INT_LOW);
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Filter Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_FILTER_CTL;
+    command[2] = 0x00 |
+            ADXL362_RANGE_4G |
+            (0<<4) | //0.5 bandwidth vs 0.25 bandwidth
+//          ADXL362_EXT_TRIGGER | 
+            ADXL362_RATE_400;  //ODR = 400hz
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
+    
+    
+    //Configure Power Control Register
+    command[0] = ADXL362_REG_WRITE;
+    command[1] = ADXL362_POWER_CTL;
+    command[2] = 0x00 |
+//          ADXL362_EXT_CLOCK |
+            ADXL362_LOW_NOISE2 | //Ultra low noise mode
+//          ADXL362_SLEEP |
+//          ADXL362_AUTO_SLEEP |
             ADXL362_MEASURE_3D; //Turn on Measurement mode
-    FIFOSPI2_pushTxQueue(measurementMode, 3, ADXL362_SLAVE_SELECT_LINE);
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
 
 
-    //Immediately Follow it with a read X register
-    char readReg[3];
-    readReg[0] = ADXL362_REG_READ; //Read
-    readReg[1] = ADXL362_XDATA8; //read X-reg
-    readReg[2] = 0x00; //fluff for the read
-    FIFOSPI2_pushTxQueue(measurementMode, 3, ADXL362_SLAVE_SELECT_LINE);
-
+    //Read X register
+    command[0] = ADXL362_REG_READ; //Read
+    command[1] = ADXL362_XDATA8; //read X-reg
+    command[2] = 0x00; //fluff for the read
+    FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);
 
     //Wait for all data to be sent
-    while (FIFOSPI2_rxBufferIndex() < 6) {}
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
-    //k = FIFOSPI2_ReadQueue(&j);
+    while (FIFOSPI2_rxBufferIndex() < (3*16)) {}
+
+    //pop all data from stack
+    i = 0;
+    while (i < (3*16))
+    {
+        func_rslt = FIFOSPI2_popRxQueue(&read_rslt1);
+        i++;
+    }
 }
 
 void ADXL362_pushReadXYZT()
 {
     //Burst read
-    char read[10];
+    uint8 read[10];
     read[0] = ADXL362_REG_READ; //Read
     read[1] = ADXL362_XDATAL; //read X-reg
     read[2] = 0x00; //ADXL362_XDATAL
@@ -126,11 +222,11 @@ void ADXL362_interpretXYZT()
 }
 void ADXL362_convertXYZT()
 {
-        float G_per_LSB = 0;
+    float G_per_LSB = 0;
     float C_per_LSB = 0;
 
     //gravitiys per least significant bit (Check ADXL362 datasheet)
-    G_per_LSB = 1e-3; //For the 2g range
+    G_per_LSB = 2e-3; //For the +-4g range
     //celsius per least significant bit (Check ADXL362 datasheet)
     C_per_LSB = 0.065;
 
