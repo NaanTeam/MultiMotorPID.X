@@ -179,7 +179,7 @@ void ADXL362_pushReadXYZT()
     read[9] = 0x00; //ADXL362_TEMPH
     FIFOSPI2_pushTxQueue(read, 10, ADXL362_SLAVE_SELECT_LINE);
 }
-void ADXL362_interpretXYZT()
+void ADXL362_popXYZT()
 {    
     uint8 func_rslt, fluff;
     

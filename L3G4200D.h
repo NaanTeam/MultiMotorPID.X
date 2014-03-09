@@ -134,7 +134,7 @@ extern "C" {
 //... Additional interrupt registers that I didn't include.
 
 //******************************************************************************
-//Global Variables
+//Public Variables Declarations
 //******************************************************************************
 /** Contains the L3G4200D's X angular rate reading in degrees per second*/
 extern float L3G4200D_XAngularRate;

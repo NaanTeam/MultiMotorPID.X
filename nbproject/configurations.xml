@@ -53,7 +53,7 @@
         <itemPath>HMC5883L.c</itemPath>
         <itemPath>SensorLoop.c</itemPath>
       </logicalFolder>
-      <itemPath>Main_IMU_Orientation.c</itemPath>
+      <itemPath>Main_MultiMotorPID.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

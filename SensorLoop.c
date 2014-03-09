@@ -42,14 +42,14 @@ void __ISR(_TIMER_1_VECTOR, IPL3AUTO) Timer1Handler(void)
 {
 
     //Interpret the previously read data.
-    ADXL362_interpretXYZT();
+    ADXL362_popXYZT();
     L3G4200D_popXYZT();
     HMC5883L_popXZY();
     
     //Convert Raw data into meaningful data(optional and potential optimization)
     ADXL362_convertXYZT();
-    HMC5883L_convertXYZ();
     L3G4200D_convertXYZT();
+    HMC5883L_convertXYZ();
 
 
     //Que reads to the sensors for next timer tick.

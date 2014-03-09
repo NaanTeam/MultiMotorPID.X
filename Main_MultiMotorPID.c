@@ -1,5 +1,5 @@
 /* 
- * File:   main.c
+ * File:   Main_MultiMotorPID.c
  * Author: Connor
  *
  * Created on October 15, 2013, 11:44 PM

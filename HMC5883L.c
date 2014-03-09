@@ -23,22 +23,30 @@ void HMC5883L_startMeasurements()
     uint8 buffer[10];
 
     //Config Register A
-    buffer[0] = 0x74; //111 0100  //30hz refresh rate
-
+    //buffer[0] = 0x74; //111 0100  //30hz refresh rate
+    buffer[0] = 0x00 |
+            (0 << HMC5883L_RegBit_CRA7) |   //Reserver
+            (0 << HMC5883L_RegBit_MA0) |    //1 sample averaged
+            (4 << HMC5883L_RegBit_DO0) |    //75Hz Data Output rate
+            (0 << HMC5883L_RegBit_MS0);     //Normal Measurement Mode
     //Config Register B
-    buffer[1] = 0xA0;
+   // buffer[1] = 0xA0;
+    buffer[1] = 0x00 |
+            (1 << HMC5883L_RegBit_GN0);     //Recommended ± 1.3 Ga. Gain: 1090 (default). Resoltuon 0.92mG/LSB
 
     //Mode Register
-    buffer[2] = 0x00; //cont meaurement mode
+    buffer[2] = 0x00 |
+            (0 << HMC5883L_RegBit_HS) | //Disabled High Speed I2C (3400kHz).
+            (0 << HMC5883L_RegBit_MD0); //Continuous-Measurement Mode.
 
-    FIFOI2C2_pushTxQueue_writeDeviceRegisters(0, 0x00, buffer, 3);
+    FIFOI2C2_pushTxQueue_writeDeviceRegisters(HMC5883L_I2C_DEVICE_NUMBER, HMC5883L_Reg_CFGA, buffer, 3);
 
 }
 
 
 void HMC5883L_pushReadXZY()
 {
-    FIFOI2C2_pushTxQueue_readDeviceRegisters(0, 0x03, 6);
+    FIFOI2C2_pushTxQueue_readDeviceRegisters(HMC5883L_I2C_DEVICE_NUMBER, HMC5883L_Reg_XMSB, 6);
 }
 
 
