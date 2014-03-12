@@ -12,11 +12,10 @@
  *      -PIC32MX695F512L
  *
  * @remarks:
- *
- */
+*/
 
-#ifndef SensorLoop_H
-#define	SensorLoop_H
+#ifndef SENSORLOOP_H
+#define	SENSORLOOP_H
 
 #ifdef	__cplusplus
 extern "C" {

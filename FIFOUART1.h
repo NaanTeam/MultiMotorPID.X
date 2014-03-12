@@ -30,7 +30,7 @@ extern "C" {
 //Configuration #defines
 //******************************************************************************
 /**Controls UART1's transfer baud rate.*/
-#define FIFOUART1_BAUD_RATE 38400
+#define FIFOUART1_BAUD_RATE 115200
 /**Controls FIFOUART1's tx and rx buffer size.*/
 #define FIFOUART1_BUFFERSIZE 256
 

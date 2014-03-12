@@ -127,7 +127,7 @@ void ADXL362_startMeasurements()
     command[1] = ADXL362_FILTER_CTL;
     command[2] = 0x00 |
             ADXL362_RANGE_4G |
-            (0<<4) | //0.5 bandwidth vs 0.25 bandwidth
+            (0<<4) | //0.5 bandwidth (rather than 0.25 bandwidth)
 //          ADXL362_EXT_TRIGGER | 
             ADXL362_RATE_400;  //ODR = 400hz
     FIFOSPI2_pushTxQueue(command, 3, ADXL362_SLAVE_SELECT_LINE);

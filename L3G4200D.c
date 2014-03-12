@@ -14,6 +14,8 @@ int16 L3G4200D_YAngularRate_Raw = 0;
 int16 L3G4200D_ZAngularRate_Raw = 0;
 int16 L3G4200D_Temperature_Raw = 0;
 
+int16 L3G4200D_XAngularRate_Raw_Avg = 0;
+
 //******************************************************************************
 //Public Function Definitions
 //******************************************************************************
@@ -29,7 +31,7 @@ int L3G4200D_startMeasurements()
 
     //CtrlReg1: Basic config
     command = 0x00 |
-            (3 << L3G4200D_RegBit_DR) | //ODR (800 hz)
+            (1 << L3G4200D_RegBit_DR) | //ODR (200 hz)
             (0 << L3G4200D_RegBit_BW) | //30 Cutoff
             (1 << L3G4200D_RegBit_PD) | //Turn's off Power Down
             (1 << L3G4200D_RegBit_Zen) | //Enables Z axis

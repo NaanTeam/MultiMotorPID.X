@@ -136,6 +136,12 @@ inline int MsgInterpreter_interpret_readRegisters(uint8 message[])
                 buffer[buffer_len++] = temp[1];
                 break;
 
+            case SERIALCOMM_REGISTER_XAngularRate_Raw_Avg:
+                temp = (uint8*)(&L3G4200D_XAngularRate_Raw_Avg);
+                buffer[buffer_len++] = temp[0];
+                buffer[buffer_len++] = temp[1];
+                break;
+
 
             //3-axis Compass
             case SERIALCOMM_REGISTER_XMagneticVector:

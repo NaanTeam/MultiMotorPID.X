@@ -25,7 +25,7 @@
 //******************************************************************************
 
 /**Controls the baud rate of the I2C device.*/
-#define FIFOI2C2_BAUD_RATE 100000
+#define FIFOI2C2_BAUD_RATE 400000
 
 /**Controls the maximum number of devices the I2C module supports.
  * 

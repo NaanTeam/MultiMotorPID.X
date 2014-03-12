@@ -130,7 +130,7 @@
  *      10 = PBCLK is SYSCLK divided by 4
  *      01 = PBCLK is SYSCLK divided by 2
  *      00 = PBCLK is SYSCLK divided by 1*/
-#pragma config FPBDIV   = DIV_4
+#pragma config FPBDIV   = DIV_1
 // </editor-fold>
 
 // SYSCLK = 80 MHz (8MHz Crystal/ FPLLIDIV * FPLLMUL / FPLLODIV) (8/2  * 20/1)
@@ -150,18 +150,16 @@ void DelayTime(int inter)
 int main(int argc, char** argv)
 {
     //DDPCONbits.JTAGEN = 0; //Enable if using onboard pullup resistors.
-
     SensorLoop_SetupAll();
-    
     CommunicationLoop_initialize();
-
     
+    Orientation_setup();
+
     // Enable multi-vector interrupts
     INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
     //Turn on Interrupts
     INTEnableInterrupts();
 
-    OrientationLoop_setup();
 
     //Give it some time to start up
     DelayTime(100);
@@ -173,7 +171,7 @@ int main(int argc, char** argv)
     //Start Orientation/PID Loop
     while(1)
     {
-        Orientation_Update();
+        //Orientation_Update();
         DelayTime(100);
         //Gather Orientation
         //Get radio controller offsets
