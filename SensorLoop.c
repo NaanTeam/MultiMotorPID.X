@@ -72,7 +72,7 @@ void __ISR(_TIMER_1_VECTOR, IPL3AUTO) Timer1Handler(void)
 //    output = (int)(alpha * (float)L3G4200D_XAngularRate_Raw + output * (1.0 - alpha));
 //    L3G4200D_XAngularRate_Raw_Avg = output;
     
-    output = (L3G4200D_XAngularRate_Raw + 19 * output) / 20; //13
+    output = (15*L3G4200D_XAngularRate_Raw + 5*output) / 20; //13
     L3G4200D_XAngularRate_Raw_Avg = output;
 
 
